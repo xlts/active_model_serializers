@@ -375,6 +375,8 @@ module ActiveModel
 
     def read_attribute_for_serialization(attr)
       if respond_to?(attr)
+        # prevent invalid #send invocation when method has required parameters
+        raise "Invalid attribute name: #{attr}" if method(attr).parameters.any? { |params| params.first == :req }
         send(attr)
       else
         object.read_attribute_for_serialization(attr)
